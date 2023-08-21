@@ -1,0 +1,14 @@
+PUT _ingest/pipeline/add_timestamp
+{
+  "description": "Pipeline to automatically add @timestamp to incoming logs.",
+  "processors": [
+    {
+      "set": {
+        "field": "@timestamp",
+        "value": "{{_ingest.timestamp}}",
+        "ignore_empty_value": true,
+        "ignore_failure": true
+      }
+    }
+  ]
+}
