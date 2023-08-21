@@ -1,1 +1,4 @@
-print("This is a test")
+import streamlit
+
+streamlit.text('This is some random test text.')
+streamlit.selectbox('Pick log type:', ['location', 'overview', 'person', 'quest'])
