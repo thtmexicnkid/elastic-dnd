@@ -21,5 +21,5 @@ message = streamlit.text_input("Input note here:")
 if type == "quest":
     name = streamlit.text_input("What is the name of the quest?")
     finished = streamlit.checkbox("Is the quest finished?")
-
-streamlit.write([index, type, session, message, name, finished])
+    streamlit.write([index, type, session, message, name, finished])
+streamlit.write([index, type, session, message])
