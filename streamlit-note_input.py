@@ -10,7 +10,7 @@ elif note_taker == "Corver Flickerspring":
 elif note_taker == "Mae Avraya":
   index = "dnd-notes-mae_avraya"
 elif note_taker == "Nyx":
-index = "dnd-notes-nyx"
+  index = "dnd-notes-nyx"
 elif note_taker == "Tanja":
   index = "dnd-notes-tanja"
 
