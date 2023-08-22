@@ -5,3 +5,4 @@ note_taker = streamlit.selectbox('Who are you?', ['Bengamin Bolton','Corver Flic
 
 if note_taker == "Bengamin Bolton":
   index = "dnd-notes-bengamin_bolton"
+  streamlit.text(index)
