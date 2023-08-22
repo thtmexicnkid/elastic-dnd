@@ -12,7 +12,7 @@ import streamlit
 
 ### Static variables
 elastic_headers = {"Content-Type":"application/json"}
-elastic_auth = HTTPBasicAuth("ApiKey","")
+elastic_auth = requests.auth.HTTPBasicAuth("ApiKey","")
 
 ### Functions
 def send_to_elastic(payload):
