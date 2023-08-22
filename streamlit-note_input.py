@@ -21,4 +21,4 @@ elif note_type == "overview":
 elif note_type == "person":
   continue
 elif note_type == "quest":
-  
+  continue
