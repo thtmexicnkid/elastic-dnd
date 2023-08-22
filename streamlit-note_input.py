@@ -12,12 +12,12 @@ import streamlit
 
 ### Static variables
 elastic_headers = {"Content-Type":"application/json"}
-elastic_auth = requests.auth.HTTPBasicAuth("ApiKey","")
+elastic_auth = requests.auth.HTTPBasicAuth("ApiKey","SOME_API_KEY")
 
 ### Functions
-def send_to_elastic(payload):
-    response = requests.post(elastic_url,data=payload,headers=elastic_headers,auth=elastic_auth)
-    return response.json
+def send_to_elastic(url,data,headers,auth):
+    response = requests.put(url,data=data,headers=headers,auth=auth,verify=False)
+    return response.json()
 
 ### Program
 streamlit.title("D&D Note Input")
@@ -34,7 +34,7 @@ elif note_taker == "Nyx":
     index = "dnd-notes-nyx"
 elif note_taker == "Tanja":
     index = "dnd-notes-tanja"
-elastic_url = "" + index + "/_doc"
+elastic_url = "https://localhost:9200/" + index + "/_doc"
 
 # Setting dynamic variables based on user input. Payload is populated accordingly.
 type = streamlit.selectbox("What kind of note is this?", ["location","overview","person","quest"])
@@ -50,4 +50,4 @@ else:
     json = json.dumps({"message":message,"session":session,"type":type})
 
 # Sends the note to Elastic.
-#streamlit.button("Click to submit note.", on_click=send_to_elastic(json))
+streamlit.button("Click to submit note.",on_click=send_to_elastic, args=[elastic_url,json,elastic_headers,elastic_auth])
