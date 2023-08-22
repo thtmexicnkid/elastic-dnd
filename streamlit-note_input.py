@@ -18,7 +18,7 @@ elif note_taker == "Tanja":
 type = streamlit.selectbox("What kind of note is this?", ["location","overview","person","quest"])
 session = streamlit.number_input("Which session is this?", 0, 250)
 message = streamlit.text_input("Input note here:")
-if note_type == "quest":
+if type == "quest":
     name = streamlit.text_input("What is the name of the quest?")
     finished = streamlit.checkbox("Is the quest finished?")
 
