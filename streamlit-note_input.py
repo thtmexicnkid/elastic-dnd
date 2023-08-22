@@ -50,4 +50,4 @@ else:
     json = json.dumps({"message":message,"session":session,"type":type})
 
 # Sends the note to Elastic.
-streamlit.button("Click to submit note.", on_click=send_to_elastic(json))
+#streamlit.button("Click to submit note.", on_click=send_to_elastic(json))
