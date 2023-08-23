@@ -7,17 +7,25 @@
 
 ### Modules
 import json
-import requests
 import streamlit
+from elasticsearch import Elasticsearch
 
 ### Static variables
-elastic_headers = {"Content-Type":"application/json"}
-elastic_auth = requests.auth.HTTPBasicAuth("ApiKey","SOME_API_KEY")
+elastic_url = "https://localhost:9200"
+elastic_ca_certs = "PATH_TO_CA.crt"
+elastic_api_key = ("API_KEY_ID","API_KEY_VALUE")
 
 ### Functions
-def send_to_elastic(url,data,headers,auth):
-    response = requests.put(url,data=data,headers=headers,auth=auth,verify=False)
-    return response.json()
+def send_to_elastic(index,document):
+    # Connect to Elasticsearch
+    client = Elasticsearch(
+        elastic_url,
+        ca_certs=elastic_ca_certs,
+        api_key=elastic_api_key
+    )
+    
+    response = client.index(index=index,document=document)
+    print(response)
 
 ### Program
 streamlit.title("D&D Note Input")
@@ -34,7 +42,6 @@ elif note_taker == "Nyx":
     index = "dnd-notes-nyx"
 elif note_taker == "Tanja":
     index = "dnd-notes-tanja"
-elastic_url = "https://localhost:9200/" + index + "/_doc"
 
 # Setting dynamic variables based on user input. Payload is populated accordingly.
 type = streamlit.selectbox("What kind of note is this?", ["location","overview","person","quest"])
@@ -50,4 +57,4 @@ else:
     json = json.dumps({"message":message,"session":session,"type":type})
 
 # Sends the note to Elastic.
-streamlit.button("Click to submit note.",on_click=send_to_elastic, args=[elastic_url,json,elastic_headers,elastic_auth])
+streamlit.button("Click to submit note.",on_click=send_to_elastic, args=[index,json])
