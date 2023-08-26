@@ -1,7 +1,7 @@
 PUT _index_template/dnd-notes
 {
   "index_patterns": [
-    "dnd-notes"
+    "dnd-notes-*"
   ],
   "template": {
     "settings": {
