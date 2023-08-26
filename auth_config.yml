@@ -1,0 +1,16 @@
+cookie:
+  expiry_days: 0
+  key: random_signature_key
+  name: random_cookie_name
+credentials:
+  usernames:
+    test:
+      email: test@test.com
+      name: Test Account
+      password: $2b$12$JSOs7RUHzkJzFkcOPT.Ofe.HeHgDQDLPF1xENaVHhAvYydWIyOw1a
+    test2:
+      email: test2@test.com
+      name: Test Account
+      password: $2b$12$SzeCsOvc9A.E7sryLr0dEuiENIY/2re0kqkGRBgb1EUuWZRMyZ3iK
+preauthorized:
+  emails: []
