@@ -14,3 +14,4 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
   * Standalone:
     * [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html)
     * [Kibana](https://www.elastic.co/guide/en/kibana/current/setup.html)
+* An [AssemblyAI](https://www.assemblyai.com/) API key for audio transcription
