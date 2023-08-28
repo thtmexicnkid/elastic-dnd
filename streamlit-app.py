@@ -2,9 +2,9 @@ import streamlit as st
 import streamlit_authenticator as stauth
 
 elastic_url = "https://localhost:9200"
-elastic_ca_certs = "D:\\Games\\DnD\\Notes\\kibana-8.8.2\\data\\ca_1690065405072.crt"
-elastic_api_key = ("2yMSIIoBnQzsNJ6e4j88","ApjPdeDkRhWtkusfC55qHw")
-streamlit_path = "D:\\Games\\DnD\\Notes\\"
+elastic_ca_certs = "PATH_TO_ELASTIC_CA.crt"
+elastic_api_key = ("API_KEY","API_KEY_VALUE")
+streamlit_path = "PATH_THAT_CONTAINS_APP_SCRIPT"
 
 def app_page1():    
     tab1, tab2 = st.tabs(["Login", "Register"])
@@ -80,7 +80,7 @@ def app_page2_audio():
     
 def app_page2_text():
     import json
-    
+    #WIP
     text_form_variable_list = []
     """
     log_type = st.selectbox("What kind of note is this?", ["location","overview","person","quest"])
@@ -168,7 +168,7 @@ def success(text):
 def transcribe_audio(file):
     import assemblyai
     
-    assemblyai.settings.api_key = "0a9d5171bf6e4f139121dcad4f622680"
+    assemblyai.settings.api_key = "ASSEMLY_AI_API_KEY"
     transcriber = assemblyai.Transcriber()
     transcript = transcriber.transcribe(streamlit_path + file)
     
