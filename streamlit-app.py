@@ -152,6 +152,13 @@ def clear_session_state(variable_list):
         except:
             pass
 
+def display_image(image_path):
+    # displays an image via path relative to streamlit app script
+    from PIL import Image
+
+    image = Image.open(image_path)
+    st.image(image)
+
 def elastic_index_document(index,document):
     # sends a document to an Elastic index
     from elasticsearch import Elasticsearch
@@ -239,7 +246,7 @@ initialize_session_state(["username"])
 authenticator = load_yml()
 
 # displays application title and sets page accordingly
-st.title("Elastic D&D")
+display_image("banner.png")
 if not st.session_state.username:
     st.session_state.runpage = app_page1
     st.session_state.runpage()
