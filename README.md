@@ -5,6 +5,11 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 
 # Dependencies
 * Some sort of Python environment. I set mine up via [Anaconda](https://docs.anaconda.com/free/anaconda/install/)
-* [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
-* [Streamlit Authenticator](https://github.com/mkhorasani/Streamlit-Authenticator)
-* [Streamlit](https://docs.streamlit.io/library/get-started/installation)
+* [Python - Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
+* [Python - Streamlit Authenticator](https://github.com/mkhorasani/Streamlit-Authenticator)
+* [Python - Streamlit](https://docs.streamlit.io/library/get-started/installation)
+* Some sort of Elastic environment:
+  * [Elastic Cloud](https://www.elastic.co/guide/en/cloud/current/ec-create-deployment.html)
+  * Standalone:
+    * [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html)
+    * [Kibana](https://www.elastic.co/guide/en/kibana/current/setup.html)
