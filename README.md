@@ -4,10 +4,11 @@
 My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for note-taking, but also for anything else that comes to mind.
 
 # Dependencies
-* Some sort of Python environment. I set mine up via [Anaconda](https://docs.anaconda.com/free/anaconda/install/)
-* [Python - Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
-* [Python - Streamlit Authenticator](https://github.com/mkhorasani/Streamlit-Authenticator)
-* [Python - Streamlit](https://docs.streamlit.io/library/get-started/installation)
+* Some sort of Python environment. I set mine up via [Anaconda](https://docs.anaconda.com/free/anaconda/install/).
+  * Modules:
+    * [Python - Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
+    * [Python - Streamlit Authenticator](https://github.com/mkhorasani/Streamlit-Authenticator)
+    * [Python - Streamlit](https://docs.streamlit.io/library/get-started/installation)
 * Some sort of Elastic environment:
   * [Elastic Cloud](https://www.elastic.co/guide/en/cloud/current/ec-create-deployment.html)
   * Standalone:
