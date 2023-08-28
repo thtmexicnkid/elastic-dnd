@@ -10,10 +10,10 @@ import streamlit_authenticator as stauth
 ### STATIC VARIABLES ###
 # *** change this to fit your environment ***
 character_to_index = {"Bengamin Bolton":"dnd-notes-bengamin_bolton","Corver Flickerspring":"dnd-notes-corver_flickerspring","Mae Avraya":"dnd-notes-mae_avraya", "Nyx":"dnd-notes-nyx", "Tanja":"dnd-notes-tanja"}
-elastic_url = "https://localhost:9200"
-elastic_ca_certs = "D:\\Games\\DnD\\Notes\\kibana-8.8.2\\data\\ca_1690065405072.crt"
-elastic_api_key = ("2yMSIIoBnQzsNJ6e4j88","ApjPdeDkRhWtkusfC55qHw")
-streamlit_path = "D:\\Games\\DnD\\Notes\\"
+elastic_url = "ELASTIC_URL"
+elastic_ca_certs = "PATH_TO_ELASTIC_CA.crt"
+elastic_api_key = ("API_KEY_ID","API_KEY")
+streamlit_path = "PATH_TO_STREAMLIT_SCRIPT"
 
 ### FUNCTIONS ###
 def app_page1():
@@ -219,7 +219,7 @@ def transcribe_audio(file):
     import assemblyai
     
     # *** AssemblyAI API KEY, you need to set this ***
-    assemblyai.settings.api_key = "0a9d5171bf6e4f139121dcad4f622680"
+    assemblyai.settings.api_key = "API_KEY"
     transcriber = assemblyai.Transcriber()
     transcript = transcriber.transcribe(streamlit_path + file)
     
