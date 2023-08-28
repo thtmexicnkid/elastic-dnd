@@ -1,4 +1,4 @@
-![elastic-dnd banner](https://github.com/thtmexicnkid/elastic-dnd/blob/main/elastic-dnd.png)
+![elastic-dnd banner](https://github.com/thtmexicnkid/elastic-dnd/blob/main/banner.png)
 
 # Description
 My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for note-taking, but also for anything else that comes to mind.
