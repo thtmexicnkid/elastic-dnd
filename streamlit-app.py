@@ -193,7 +193,7 @@ def load_yml():
     import yaml
     from yaml.loader import SafeLoader
     
-    with open(streamlit_path + "auth_config.yaml") as file:
+    with open(streamlit_path + "streamlit-auth.yaml") as file:
         config = yaml.load(file, Loader=SafeLoader)
 
     authenticator = stauth.Authenticate(
@@ -229,7 +229,7 @@ def update_yml():
     # updates login authentication configuration file
     import yaml
     
-    with open(streamlit_path + "auth_config.yaml", 'w') as file:
+    with open(streamlit_path + "streamlit-auth.yaml", 'w') as file:
         yaml.dump(config, file, default_flow_style=False)
 
 ### PROGRAM ###
