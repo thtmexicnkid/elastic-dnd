@@ -3,6 +3,12 @@
 # Description
 My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for note-taking, but also for anything else that comes to mind.
 
+# Application Functions
+* Login + Password system for access control
+* Manual note input with a handful of types -- location, quest, person, overview
+* Audio to text transcription from recorded session audio
+* WORK IN PROGRESS -- Ask the Virtual DM questions about your sessions
+
 # Dependencies
 * Some sort of Python environment. I set mine up via [Anaconda](https://docs.anaconda.com/free/anaconda/install/).
   * Modules:
