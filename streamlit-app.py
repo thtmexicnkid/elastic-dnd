@@ -27,7 +27,7 @@ def app_page1():
                 st.session_state.runpage = "app_page2"
                 st.experimental_rerun()
             elif authentication_status == False:
-                st.error('Username/password is incorrect')
+                error_message('Username/password is incorrect')
             elif authentication_status == None:
                 st.warning('Please enter your username and password')
         except:
