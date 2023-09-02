@@ -1,0 +1,16 @@
+credentials:
+  usernames:
+    corver_flickerspring:
+      email: corver@dnd.com
+      name: Corver Flickerspring
+      password: $2b$12$ZkG1zJfJn8a/b8VgomkEDutR8EWG6MCITtqLWlU530n2c5zj2/72S
+cookie:
+  expiry_days: 0
+  key: random_signature_key # Must be string
+  name: random_cookie_name
+preauthorized:
+  emails:
+  - bengamin@dnd.com
+  - mae@dnd.com
+  - nyx@dnd.com
+  - tanja@dnd.com
