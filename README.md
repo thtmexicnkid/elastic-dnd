@@ -1,4 +1,4 @@
-![elastic-dnd banner](https://github.com/thtmexicnkid/elastic-dnd/blob/main/banner.png)
+![elastic-dnd banner](https://github.com/thtmexicnkid/elastic-dnd/blob/main/data/banner.png)
 
 # Description
 My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for note-taking, but also for anything else that comes to mind.
@@ -10,14 +10,8 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 * WORK IN PROGRESS -- Ask the Virtual DM questions about your sessions
 
 # Dependencies
-* Some sort of Python environment. I set mine up via [Anaconda](https://docs.anaconda.com/free/anaconda/install/).
-  * Modules:
-    * [Python - Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/client/python-api/current/index.html)
-    * [Python - Streamlit Authenticator](https://github.com/mkhorasani/Streamlit-Authenticator)
-    * [Python - Streamlit](https://docs.streamlit.io/library/get-started/installation)
-* Some sort of Elastic environment:
-  * [Elastic Cloud](https://www.elastic.co/guide/en/cloud/current/ec-create-deployment.html)
-  * Standalone:
-    * [Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/setup.html)
-    * [Kibana](https://www.elastic.co/guide/en/kibana/current/setup.html)
+* [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Docker Engine](https://docs.docker.com/engine/install/) with [Docker-Compose](https://docs.docker.com/compose/install/)
+  * Docker Desktop comes with Docker-Compose installed already; definitely the easier option.
 * An [AssemblyAI](https://www.assemblyai.com/) API key for audio transcription
+
+# Setup
