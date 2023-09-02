@@ -1,0 +1,4 @@
+assemblyai
+elasticsearch
+streamlit
+streamlit_authenticator
