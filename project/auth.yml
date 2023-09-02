@@ -4,13 +4,13 @@ cookie:
   name: random_cookie_name
 credentials:
   usernames:
-    corver_flickerspring:
-      email: corver@dnd.com
-      name: Corver Flickerspring
-      password: $2b$12$Jor1bIh0BiVn1sakzI.rAuh6Yb4VRqUZt/pRV3cqmQfzyMb3.4Dza
+    player1:
+      email: player1@dnd.com
+      name: Player One
+      password: # paste hash from generate_password.py here
 preauthorized:
   emails:
-  - bengamin@dnd.com
-  - mae@dnd.com
-  - nyx@dnd.com
-  - tanja@dnd.com
+  - player2@dnd.com
+  - player3@dnd.com
+  - player4@dnd.com
+  - player5@dnd.com
