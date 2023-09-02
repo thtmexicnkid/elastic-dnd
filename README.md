@@ -15,3 +15,8 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 * An [AssemblyAI](https://www.assemblyai.com/) API key for audio transcription
 
 # Setup
+### Docker setup
+* Download or clone elastic-dnd repo to whatever directory/folder you want this to run from.
+
+
+* Open command prompt / terminal and navigate to folder.
