@@ -35,7 +35,7 @@ PUT _security/api_key
   "name": "streamlit-auth"
 }
 ```
-* Paste the "id" and "api_key" values into the respective variables in "projects/app.py"
+* Paste the API key value into the "elastic_api_key variable" in "projects/app.py"
 * Paste your AssemblyAI API key into the "transcribe_audio" function in "projects/app.py"
 
 ### Player Setup
