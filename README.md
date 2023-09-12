@@ -43,21 +43,6 @@ PUT _security/api_key
   * add users to "projects/auth.yml" manually ***OR***
   * add player emails to the "preauthorized" section of "projects/auth.yml" and let them use the register function of the Streamlit application
     * Navigate to the [Streamlit application](http://localhost:8501) and use the Register tab:
-* In "project/app.py", edit the "username_to_index" variable such that the username is associated with the backing note index.
-  * {"player1":"dnd-notes-player1","player2":"dnd-notes-player2"}
-* Have players create some notes!
-
-### Kibana Setup
-* If players have not created notes yet, place an empty index for each player:
-  * Navigate to [Dev Tools](http://localhost:5601/app/dev_tools) and run the following, swapping out the index names for the ones you set up in the Streamlit application variable (***keep dnd-notes-transcribed***):
-```
-PUT dnd-notes-player1
-PUT dnd-notes-player2
-PUT dnd-notes-transcribed
-```
-* Navigate to [Data Views](http://localhost:5601/app/management/kibana/dataViews) and create one for each player, one for the audio transcription notes, and one to view all at the same time
-  * Name: Player 1's Notes, Audio Transcription Notes, All Notes, etc.
-  * Index Pattern: dnd-notes-player1, dnd-notes-transcribed, dnd-notes-*
 
 # Viewing Your Notes
 * Navigate to [Discover](http://localhost:5601/app/discover) -- select your Data View at the top left and your timeframe at the top right
