@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 09/02/2023
+# Last Updated: 09/12/2023
 # 
 # Streamlit app that allows for D&D note-taking into Elastic by text or audio.
 
@@ -9,8 +9,8 @@ import streamlit_authenticator as stauth
 
 ### VARIABLES ###
 # *** change this to fit your environment ***
-username_to_index = {"corver_flickerspring":"dnd-notes-corver_flickerspring"}
-elastic_api_key = ("API_KEY_ID","API_KEY")
+assemblyai_api_key = "API_KEY"
+elastic_api_key = "API_KEY"
 
 # *** DO NOT CHANGE ***
 elastic_url = "https://es01:9200"
@@ -45,7 +45,7 @@ def app_page1():
             error_message(e)
 
 def app_page2():
-    st.session_state["log_index"] = username_to_index[st.session_state.username]
+    st.session_state["log_index"] = "dnd-notes-" + st.session_state.username
     # displays note input, virtual DM, and account widgets
     tab1, tab2, tab3 = st.tabs(["Note Input", "WIP - Ask Virtual DM", "Account"])
     # note input tab
@@ -72,7 +72,9 @@ def app_page2():
     with tab2:
         #I want to run notes through AI to be able to ask questions from this tab and receive answers
         pass
+    # Account tab
     with tab3:
+        # runs app_page2_password_reset function
         st.session_state.runpage = app_page2_password_reset
         st.session_state.runpage()
         # logout button
@@ -89,10 +91,10 @@ def app_page2_audio():
     with st.form("audio_form", clear_on_submit=True):
         st.session_state["log_type"] = "audio"
         st.session_state["log_session"] = st.slider("Which session is this?", 0, 250)
-        st.session_state["file"] = st.file_uploader("Choose audio file",type=["mp3"])
+        st.session_state["file"] = st.file_uploader("Choose audio file",type=[".3ga",".8svx",".aac",".ac3",".aif",".aiff",".alac",".amr",".ape",".au",".dss",".flac",".flv",".m2ts",".m4a",".m4b",".m4p",".m4p",".m4r",".m4v",".mogg",".mov",".mp2",".mp3",".mp4",".mpga",".mts",".mxf",".oga",".ogg",".opus",".qcp",".ts",".tta",".voc",".wav",".webm",".wma",".wv"])
         st.session_state["submitted"] = st.form_submit_button("Upload file")
         if st.session_state.submitted and st.session_state.file is not None:
-            st.session_state["transcribed_text"] = transcribe_audio(st.session_state.file.name)
+            st.session_state["transcribed_text"] = transcribe_audio(st.session_state.file)
             if st.session_state.transcribed_text is not None:
                 st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text})
                 elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload)
@@ -107,7 +109,7 @@ def app_page2_audio():
 def app_page2_password_reset():
     try:
         if authenticator.reset_password(st.session_state.username, 'Reset password'):
-            st.success('Password modified successfully')
+            success_message('Password modified successfully')
             update_yml()
     except Exception as e:
         error_message(e)
@@ -233,6 +235,53 @@ def elastic_index_document(index,document):
     # close Elastic connection
     client.close()
 
+def elastic_kibana_setup(yml_config):
+    # creates empty placeholder indices and data views for each player, as well as for transcribed notes
+    import requests
+    from elasticsearch import Elasticsearch
+    
+    # builds list of index patterns and descriptive data view names from YAML configuration
+    kibana_setup = {"dnd-notes-*":"All Notes","dnd-notes-transcribed":"Audio Transcription Notes"}
+    for username in yml_config["credentials"]["usernames"]:
+        index = "dnd-notes-" + username
+        name = yml_config["credentials"]["usernames"][username]["name"] + "'s Notes"
+        kibana_setup[index] = name
+    
+    # creates indices and data views from list
+    for entry in kibana_setup:
+        index = entry
+        name = kibana_setup[entry]
+        
+        # creates Elastic connection
+        client = Elasticsearch(
+            elastic_url,
+            ca_certs=elastic_ca_certs,
+            api_key=elastic_api_key
+        )
+        
+        # creates index if it does not already exist
+        response = client.indices.exists(index=index)
+        if response != True:
+            try:
+                client.indices.create(index=index)
+            except:
+                pass
+        
+        # close Elastic connection
+        client.close()
+        
+        # check if data view already exists
+        url = kibana_url + "/api/data_views/data_view/" + index
+        auth = "ApiKey " + elastic_api_key
+        headers = {"kbn-xsrf":"true","Authorization":auth}
+        response = requests.get(url,headers=headers)
+        # if data view doesn't exist, create it
+        if response.status_code != 200:
+            url = kibana_url + "/api/data_views/data_view"
+            json = {"data_view":{"title":index,"name":name,"id":index}}
+            response = requests.post(url,headers=headers,json=json)
+            # could put some error message here, don't think I need to yet
+
 def elastic_update_quest_status(quest_name):
     # queries Elastic for unfinished quests and returns array
     from elasticsearch import Elasticsearch
@@ -273,7 +322,7 @@ def load_yml():
     import yaml
     from yaml.loader import SafeLoader
     
-    with open(streamlit_project_path + "auth.yaml") as file:
+    with open(streamlit_project_path + "auth.yml") as file:
         config = yaml.load(file, Loader=SafeLoader)
 
     authenticator = stauth.Authenticate(
@@ -296,27 +345,47 @@ def success_message(text):
 
 def transcribe_audio(file):
     # transcribes an audio file to text
-    import assemblyai
+    import requests
     
-    # *** AssemblyAI API KEY, you need to set this ***
-    assemblyai.settings.api_key = "API_KEY"
-    transcriber = assemblyai.Transcriber()
-    transcript = transcriber.transcribe(streamlit_data_path + file)
-    
-    return transcript.text
+    # get file url
+    headers = {'authorization':assemblyai_api_key}
+    response = requests.post('https://api.assemblyai.com/v2/upload',headers=headers,data=file)
+    url = response.json()["upload_url"]
+    # get transcribe id
+    endpoint = "https://api.assemblyai.com/v2/transcript"
+    json = {"audio_url":url}
+    headers = {"authorization":assemblyai_api_key,"content-type":"application/json"}
+    response = requests.post(endpoint, json=json, headers=headers)
+    transcribe_id = response.json()['id']
+    result = {}
+    #polling
+    while result.get("status") != "processing":
+        # get text
+        endpoint = f"https://api.assemblyai.com/v2/transcript/{transcribe_id}"
+        headers = {"authorization":assemblyai_api_key}
+        result = requests.get(endpoint, headers=headers).json()
+
+    while result.get("status") != 'completed':
+        # get text
+        endpoint = f"https://api.assemblyai.com/v2/transcript/{transcribe_id}"
+        headers = {"authorization":assemblyai_api_key}
+        result = requests.get(endpoint, headers=headers).json()
+
+    return result['text']
 
 def update_yml():
     # updates login authentication configuration file
     import yaml
 
-    with open(streamlit_project_path + "auth.yaml", 'w') as file:
+    with open(streamlit_project_path + "auth.yml", 'w') as file:
         yaml.dump(config, file, default_flow_style=False)
 
 ### PROGRAM ###
 
-# initializes session state and loads login authentication configuration
+# initializes session state, loads login authentication configuration, and performs index/data view setup in Elastic
 initialize_session_state(["username"])
 config, authenticator = load_yml()
+elastic_kibana_setup(config)
 
 # displays application title and sets page accordingly
 display_image(streamlit_data_path + "banner.png")
