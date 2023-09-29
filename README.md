@@ -47,3 +47,10 @@ PUT _security/api_key
 # Viewing Your Notes
 * Navigate to [Discover](http://localhost:5601/app/discover) -- select your Data View at the top left and your timeframe at the top right
 * Check out this [documentation](https://www.elastic.co/guide/en/kibana/current/kuery-query.html) to learn how to search
+
+# Accessing from the Internet
+* Via your router, forward ports 5601 and 8501 to your machine. (I will talk about this in-depth on my October 6th, 2023 blog post.)
+* Find your public IP address with [https://whatismyipaddress.com/](https://whatismyipaddress.com/)
+* Connect to the applications:
+  * Users on the same network as the hosted applications can use [http://localhost:5601](http://localhost:5601) and [http://localhost:8501](http://localhost:8501) for Kibana and Streamlit, respectively.
+  * Users on networks external to the hosted applications can use [http://PUBLIC_IP:5601](http://PUBLIC_IP:5601) and [http://PUBLIC_IP:8501](http://PUBLIC_IP:8501) for Kibana and Streamlit, respectively.
