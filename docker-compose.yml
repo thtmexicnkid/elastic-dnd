@@ -12,7 +12,7 @@ volumes:
 
 networks:
     default:
-        name: elastic
+        name: elastic-dnd-internal
         external: false
 
 services:
@@ -117,6 +117,18 @@ services:
             interval: 10s
             timeout: 10s
             retries: 120
+    api:
+        depends_on:
+            es01:
+                condition: service_healthy
+        build:
+            dockerfile: .\dockerfile-api
+            context: .\
+        ports:
+            - ${API_PORT}:8000
+        volumes:
+            - '.\data:/usr/src/app/data:delegated'
+            - '.\project\api:/usr/src/app/api:delegated'
     kibana:
         depends_on:
             es01:
@@ -150,17 +162,15 @@ services:
             retries: 120
     streamlit:
         depends_on:
-            es01:
+            kibana:
                 condition: service_healthy
         build:
-            dockerfile: .\Dockerfile
+            dockerfile: .\dockerfile-streamlit
             context: .\
         ports:
             - ${STREAMLIT_PORT}:8501
         volumes:
             - certs:/usr/src/app/certs
             - '.\data:/usr/src/app/data:delegated'
-            - '.\project:/usr/src/app/project:delegated'
-        environment:
-            - USER_ID=1000
-            - GROUP_ID=1000
+            - '.\project\streamlit:/usr/src/app/streamlit:delegated'
+            - '.\.streamlit:/usr/src/app/.streamlit:delegated'
