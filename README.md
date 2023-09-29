@@ -53,4 +53,4 @@ PUT _security/api_key
 * Find your public IP address with [https://whatismyipaddress.com/](https://whatismyipaddress.com/)
 * Connect to the applications:
   * Users on the same network as the hosted applications can use [http://localhost:5601](http://localhost:5601) and [http://localhost:8501](http://localhost:8501) for Kibana and Streamlit, respectively.
-  * Users on networks external to the hosted applications can use [http://PUBLIC_IP:5601](http://PUBLIC_IP:5601) and [http://PUBLIC_IP:8501](http://PUBLIC_IP:8501) for Kibana and Streamlit, respectively.
+  * Users on networks external to the hosted applications can use [http://<PUBLIC_IP>:5601](http://<PUBLIC_IP>:5601) and [http://<PUBLIC_IP>:8501](http://<PUBLIC_IP>:8501) for Kibana and Streamlit, respectively.
