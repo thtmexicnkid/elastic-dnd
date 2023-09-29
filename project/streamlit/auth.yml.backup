@@ -1,0 +1,16 @@
+cookie:
+  expiry_days: 0
+  key: random_signature_key
+  name: random_cookie_name
+credentials:
+  usernames:
+    player1:
+      email: player1@dnd.com
+      name: Player 1
+      password: test #encode with generate_password.py
+preauthorized:
+  emails:
+  - player2@dnd.com
+  - player3@dnd.com
+  - player4@dnd.com
+  - player5@dnd.com
