@@ -1,0 +1,13 @@
+[browser]
+gatherUsageStats=false
+
+[server]
+address="0.0.0.0"
+port=8501
+
+[theme]
+primaryColor="#ef5098"
+backgroundColor="#000000"
+secondaryBackgroundColor="#0779a1"
+textColor="#ffffff"
+font="sans serif"
