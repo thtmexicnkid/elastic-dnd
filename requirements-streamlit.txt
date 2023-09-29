@@ -1,0 +1,5 @@
+elasticsearch
+requests
+streamlit
+streamlit_authenticator
+urllib3
