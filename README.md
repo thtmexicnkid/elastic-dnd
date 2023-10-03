@@ -13,6 +13,7 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Docker Engine](https://docs.docker.com/engine/install/) with [Docker-Compose](https://docs.docker.com/compose/install/)
   * Docker Desktop comes with Docker-Compose installed already; definitely the easier option.
 * An [AssemblyAI](https://www.assemblyai.com/) API key for audio transcription
+* An [OpenAI](https://platform.openai.com/) API key for Virtual DM functions
 
 # Setup
 ### Docker Setup
