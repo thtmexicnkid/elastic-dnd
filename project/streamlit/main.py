@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 09/12/2023
+# Last Updated: 10/03/2023
 # 
 # Streamlit app that allows for D&D note-taking into Elastic by text or audio.
 
@@ -15,11 +15,33 @@ elastic_api_key = "API_KEY"
 # *** DO NOT CHANGE ***
 elastic_url = "https://es01:9200"
 elastic_ca_certs = "certs/ca/ca.crt"
+fastapi_url = "http://api:8000"
 kibana_url = "http://kibana:5601"
 streamlit_data_path = "data/"
 streamlit_project_path = "streamlit/"
 
 ### FUNCTIONS ###
+def api_get_vector_object(text):
+    # returns vector object from supplied text
+    import requests
+    
+    fastapi_endpoint = "/get_vector_object/"
+    full_url = fastapi_url + fastapi_endpoint + text
+    response = requests.get(full_url)
+    
+    try:
+        message_vector = response.json()
+    except:
+        message_vector = None
+        print(response.content)
+    
+    return message_vector
+    
+def api_get_vector_query_results(question):
+    # work in progress
+    vector_object = api_get_vector_object(question)
+    #plug vector object into kibana query
+
 def app_page1():
     # displays login and registration widgets
     tab1, tab2 = st.tabs(["Login", "Register"])
@@ -78,7 +100,7 @@ def app_page2_audio():
     import json
     
     #list of variables to clear from session state once finished
-    audio_form_variable_list = ["log_type","log_session","file","submitted","transcribed_text","log_payload"]
+    audio_form_variable_list = ["log_type","log_session","file","submitted","transcribed_text","log_payload","message_vector"]
     
     # displays note form widgets, creates note payload, sends payload to an Elastic index, and handles error / success / warning messages
     with st.form("audio_form", clear_on_submit=True):
@@ -87,10 +109,16 @@ def app_page2_audio():
         st.session_state["file"] = st.file_uploader("Choose audio file",type=[".3ga",".8svx",".aac",".ac3",".aif",".aiff",".alac",".amr",".ape",".au",".dss",".flac",".flv",".m2ts",".m4a",".m4b",".m4p",".m4p",".m4r",".m4v",".mogg",".mov",".mp2",".mp3",".mp4",".mpga",".mts",".mxf",".oga",".ogg",".opus",".qcp",".ts",".tta",".voc",".wav",".webm",".wma",".wv"])
         st.session_state["submitted"] = st.form_submit_button("Upload file")
         if st.session_state.submitted and st.session_state.file is not None:
-            st.session_state["transcribed_text"] = transcribe_audio(st.session_state.file)
+            # removes forward slash that will break the API call for AI functionality
+            st.session_state["transcribed_text"] = (transcribe_audio(st.session_state.file)).replace("/", " or ")
             if st.session_state.transcribed_text is not None:
-                st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text})
-                elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload)
+                # gets vector object for use with AI functionality
+                st.session_state["message_vector"] = api_get_vector_object(st.session_state.transcribed_text)
+                if st.session_state.message_vector == None:
+                    error_message("AI API vectorization failure")
+                else:
+                    st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text,"message_vector":st.session_state.message_vector})
+                    elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload)
             else:
                 error_message("Audio transcription failure")
         else:
@@ -112,7 +140,7 @@ def app_page2_text():
     import json
     
     #list of variables to clear from session state once finished
-    text_form_variable_list = ["log_type","log_session","note_taker","log_index","quest_type","quest_name","quest_finished","log_message","submitted","log_payload"]
+    text_form_variable_list = ["log_type","log_session","note_taker","log_index","quest_type","quest_name","quest_finished","log_message","submitted","log_payload","message_vector"]
 
     # displays note form widgets, creates note payload, sends payload to an Elastic index, and handles error / success / warning messages
     st.session_state["log_type"] = st.selectbox("What kind of note is this?", ["location","miscellaneous","overview","person","quest"])
@@ -124,12 +152,18 @@ def app_page2_text():
                 st.session_state["log_session"] = st.slider("Which session is this?", 0, 250)
                 st.session_state["quest_name"] = st.text_input("What is the name of the quest?")
                 st.session_state["quest_finished"] = st.checkbox("Did you finish the quest?")
-                st.session_state["log_message"] = st.text_input("Input note text:")
+                # removes forward slash that will break the API call for AI functionality
+                st.session_state["log_message"] = (st.text_input("Input note text:")).replace("/", " or ")
                 st.session_state["submitted"] = st.form_submit_button("Upload note")
                 if st.session_state.submitted == True and st.session_state.log_message is not None:
-                    st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type})
-                    elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
-                    st.experimental_rerun()
+                    # gets vector object for use with AI functionality
+                    st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
+                    if st.session_state.message_vector == None:
+                        error_message("AI API vectorization failure")
+                    else:
+                        st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
+                        elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
+                        st.experimental_rerun()
                 else:
                     st.warning('Please input note text and submit')
         else:
@@ -138,7 +172,7 @@ def app_page2_text():
                 st.session_state["log_session"] = st.slider("Which session is this?", 0, 250)
                 st.session_state["quest_name"] = st.selectbox("Which quest are you updating?", quest_names)
                 st.session_state["quest_finished"] = st.checkbox("Did you finish the quest?")
-                st.session_state["log_message"] = st.text_input("Input note text:")
+                st.session_state["log_message"] = (st.text_input("Input note text:")).replace("/", " or ")
                 st.session_state["submitted"] = st.form_submit_button("Upload note")
                 if st.session_state.submitted == True and st.session_state.log_message is not None:
                     # updates previous quest records to finished: true
@@ -146,21 +180,31 @@ def app_page2_text():
                         elastic_update_quest_status(st.session_state.quest_name)
                     else:
                         pass
-                    st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type})
-                    elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
-                    st.experimental_rerun()
+                    # gets vector object for use with AI functionality
+                    st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
+                    if st.session_state.message_vector == None:
+                        error_message("AI API vectorization failure")
+                    else:
+                        st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
+                        elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
+                        st.experimental_rerun()
                 else:
                     st.warning('Please input note text and submit')
     # displays note form for all other log types
     else:
         with st.form("text_form_wo_quest", clear_on_submit=True):
             st.session_state["log_session"] = st.number_input("Which session is this?", 0, 250)
-            st.session_state["log_message"] = st.text_input("Input note text:")
+            st.session_state["log_message"] = (st.text_input("Input note text:")).replace("/", " or ")
             st.session_state["submitted"] = st.form_submit_button("Upload Note")
             if st.session_state.submitted == True and st.session_state.log_message is not None:
-                st.session_state["log_payload"] = json.dumps({"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type})
-                elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
-                st.experimental_rerun()
+                # gets vector object for use with AI functionality
+                st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
+                if st.session_state.message_vector == None:
+                    error_message("AI API vectorization failure")
+                else:
+                    st.session_state["log_payload"] = json.dumps({"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
+                    elastic_index_document(st.session_state.log_index,st.session_state.log_payload)
+                    st.experimental_rerun()
             else:
                 st.warning('Please input note text and submit')
     
@@ -271,7 +315,7 @@ def elastic_kibana_setup(yml_config):
         # if data view doesn't exist, create it
         if response.status_code != 200:
             url = kibana_url + "/api/data_views/data_view"
-            json = {"data_view":{"title":index,"name":name,"id":index}}
+            json = {"data_view":{"title":index,"name":name,"id":index,"timeFieldName":"@timestamp"}}
             response = requests.post(url,headers=headers,json=json)
             # could put some error message here, don't think I need to yet
 
