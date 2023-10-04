@@ -19,7 +19,7 @@ config, authenticator = load_yml()
 if not st.session_state.username:
     error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
-    st.header('Virtual DM',divider=True)
+    st.header('Veverbot',divider=True)
     st.session_state["log_index"] = "dnd-notes-" + st.session_state.username
     virtual_dm_variable_list = ["question","response","question_vector","query_results","answer","answer_vector","log_payload"]
     
@@ -33,7 +33,7 @@ else:
             st.markdown(message["content"])
 
     # React to user input
-    st.session_state["question"] = st.chat_input("Ask the Virtual DM a question")
+    st.session_state["question"] = st.chat_input("Ask Veverbot a question")
     if st.session_state.question:
         st.session_state["question"] = text_cleanup(st.session_state.question)
         # Display user message in chat message container
@@ -41,7 +41,10 @@ else:
         # Add user message to chat history
         st.session_state.messages.append({"role": "user", "content": st.session_state.question})
         # Display assistant response in chat message container
+        response = f"Veverbot searching for answer to the question -- \"{st.session_state.question}\""
         with st.chat_message("assistant"):
+            st.markdown(response)
+            st.session_state.messages.append({"role": "assistant", "content": response})
             # gets vector object for use with AI functionality
             st.session_state["question_vector"] = api_get_vector_object(st.session_state.question)
             if st.session_state.question_vector == None:
