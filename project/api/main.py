@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/03/2023
+# Last Updated: 10/04/2023
 # 
 # FastAPI app that facilitates Virtual DM processes and whatever else I think of.
 
@@ -23,9 +23,26 @@ async def get_vector_object(text):
 
     return openai_embedding["data"][0]["embedding"]
 
-@app.get("/get_vector_query_results/{vector_object}")
-async def get_vector_query_results(vector_object):
-    return {"message":"Work In Progress"}
+@app.get("/get_question_answer/{question}/{query_results}")
+async def get_question_answer(question,query_results):
+    import openai
+    
+    summary = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": "Answer the following question:" 
+            + question 
+            + "by using the following text:" 
+            + query_results},
+        ]
+    )
+
+    answers = []
+    for choice in summary.choices:
+        answers.append(choice.message.content)
+
+    return answers
 
 if __name__ == '__main__':
     uvicorn.run("main:app", port=8000, host='0.0.0.0', reload=True)
