@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/03/2023
+# Last Updated: 10/04/2023
 # 
 # Streamlit - Main Page - Displays a welcome message and explains how to navigate and use the application.
 
