@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/03/2023
+# Last Updated: 10/04/2023
 # 
 # Streamlit - Account Page - Allows the user to change their password and log out.
 
@@ -17,7 +17,7 @@ config, authenticator = load_yml()
 
 # makes user log on to view page
 if not st.session_state.username:
-    error_message("UNAUTHORIZED: Please login on the Home page.",10)
+    error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
     st.header('Account',divider=True)
     try:
