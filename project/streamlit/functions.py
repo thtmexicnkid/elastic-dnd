@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/03/2023
+# Last Updated: 10/04/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -16,6 +16,21 @@ from variables import *
 from yaml.loader import SafeLoader
 
 ### FUNCTIONS ###
+def api_get_question_answer(question,query_results):
+    # returns an answer to a question asked to virtual DM
+    
+    fastapi_endpoint = "/get_question_answer/"
+    full_url = fastapi_url + fastapi_endpoint + question + "/" + query_results
+    response = requests.get(full_url)
+    
+    try:
+        answer = response.json()
+    except:
+        answer = None
+        print(response.content)
+
+    return answer
+    
 def api_get_vector_object(text):
     # returns vector object from supplied text
     
@@ -30,11 +45,13 @@ def api_get_vector_object(text):
         print(response.content)
     
     return message_vector
+
+def text_cleanup(text):
+    punctuation = ["/", "?"]
+    for symbol in punctuation:
+        text = text.replace(symbol," ")
     
-def api_get_vector_query_results(question):
-    # work in progress
-    vector_object = api_get_vector_object(question)
-    #plug vector object into kibana query
+    return text
 
 def clear_session_state(variable_list):
     # deletes variables from streamlit session state
@@ -48,6 +65,24 @@ def display_image(image_path):
     # displays an image via path relative to streamlit app script
     image = Image.open(image_path)
     st.image(image)
+
+def elastic_ai_notes_query(vector_object):
+    # queries Elastic via a KNN query to return answers to questions via virtual DM
+    
+    # creates Elastic connection
+    client = Elasticsearch(
+        elastic_url,
+        ca_certs=elastic_ca_certs,
+        api_key=elastic_api_key
+    )
+    
+    # sends document to index with success or failure message
+    response = client.search(index="dnd-notes-*",knn={"field":"message_vector","query_vector":vector_object,"k":10,"num_candidates":100})
+    
+    return response['hits']['hits'][0]['_source']["message"]
+    
+    # close Elastic connection
+    client.close()
 
 def elastic_get_quests():
     # queries Elastic for unfinished quests and returns array    
@@ -71,7 +106,7 @@ def elastic_get_quests():
     # close Elastic connection
     client.close()
 
-def elastic_index_document(index,document):
+def elastic_index_document(index,document,status_message):
     # sends a document to an Elastic index
     
     # creates Elastic connection
@@ -84,10 +119,13 @@ def elastic_index_document(index,document):
     # sends document to index with success or failure message
     response = client.index(index=index,document=document)
     
-    if response["result"] == "created":
-        success_message("Note creation successful")
+    if status_message == True:
+        if response["result"] == "created":
+            success_message("Note creation successful")
+        else:
+            error_message("Note creation failure",2)
     else:
-        error_message("Note creation failure",2)
+        pass
     
     # close Elastic connection
     client.close()
@@ -96,13 +134,13 @@ def elastic_kibana_setup(yml_config):
     # creates empty placeholder indices and data views for each player, as well as for transcribed notes
     
     # builds list of index patterns and descriptive data view names from YAML configuration
-    kibana_setup = {"dnd-notes-*":"All Notes","dnd-notes-transcribed":"Audio Transcription Notes"}
+    kibana_setup = {"dnd-notes-*":"All Notes","dnd-notes-transcribed":"Audio Transcription Notes","virtual_dm-questions_answers":"Virtual DM Notes"}
     for username in yml_config["credentials"]["usernames"]:
         index = "dnd-notes-" + username
         name = yml_config["credentials"]["usernames"][username]["name"] + "'s Notes"
         kibana_setup[index] = name
     
-    # creates indices and data views from list
+    # creates indices and data views from usernames
     for entry in kibana_setup:
         index = entry
         name = kibana_setup[entry]
@@ -157,11 +195,15 @@ def elastic_update_quest_status(quest_name):
     # close Elastic connection
     client.close()
 
-def error_message(text,seconds):
+def error_message(text,timeframe):
     # displays error message    
     error = st.error(text)
-    time.sleep(seconds)
-    error.empty()
+    
+    if timeframe == False:
+        pass
+    else:
+        time.sleep(seconds)
+        error.empty()
 
 def initialize_session_state(variable_list):
     # creates empty variables in streamlit session state
