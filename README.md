@@ -3,6 +3,8 @@
 # Description
 My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for note-taking, but also for anything else that comes to mind.
 
+ A blog is being updated weekly, showing code and implementation progress, how and why I am doing things, and issues I am having along the way. You can check that out [here](https://dev.to/thtmexicnkid)
+
 # Application Functions
 * Login + Password system for access control
 * Manual note input with a handful of types -- location, quest, person, overview
