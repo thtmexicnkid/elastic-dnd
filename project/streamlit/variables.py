@@ -1,13 +1,16 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/03/2023
+# Last Updated: 11/03/2023
 # 
 # Streamlit - Backend - Houses variables that are loaded into pages of the application.
 
 ### VARIABLES ###
 # *** change this to fit your environment ***
-assemblyai_api_key = "API_KEY"
-elastic_api_key = "API_KEY"
+# use this is using free method for audio transcription
+assemblyai_api_key = None
+# use this is paying for AssemblyAI for audio transcription
+#assemblyai_api_key = "API_KEY"
+elastic_api_key = "RTA3N1Zvb0JET2JxbXFlcDZROUs6bUJUdHMxWHhUVGVqMGpMSkVRTW5OQQ=="
 
 # *** DO NOT CHANGE ***
 elastic_url = "https://es01:9200"
