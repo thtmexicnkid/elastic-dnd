@@ -1,5 +1,9 @@
 elasticsearch
+openai-whisper
+pydub
 requests
+soundfile
+SpeechRecognition
 streamlit
 streamlit_authenticator
 urllib3
