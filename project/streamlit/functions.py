@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 10/04/2023
+# Last Updated: 11/03/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -47,6 +47,7 @@ def api_get_vector_object(text):
     return message_vector
 
 def text_cleanup(text):
+    # removes punctuation incompatible with data vectorization API
     punctuation = ["/", "?"]
     for symbol in punctuation:
         text = text.replace(symbol," ")
@@ -195,11 +196,11 @@ def elastic_update_quest_status(quest_name):
     # close Elastic connection
     client.close()
 
-def error_message(text,timeframe):
+def error_message(text,seconds):
     # displays error message    
     error = st.error(text)
     
-    if timeframe == False:
+    if seconds == False:
         pass
     else:
         time.sleep(seconds)
@@ -232,8 +233,72 @@ def success_message(text):
     time.sleep(2)
     success.empty()
 
-def transcribe_audio(file):
-    # transcribes an audio file to text
+def transcribe_audio_free(file_object):
+    # transcribes an audio file to text via OpenAI Whisper
+    import os
+    import shutil
+    import speech_recognition as sr
+    from pydub import AudioSegment
+    from pydub.silence import split_on_silence
+    from tempfile import NamedTemporaryFile
+    
+    # get extension
+    filename, file_extension = os.path.splitext(file_object.name)
+    
+    # create temp file
+    with NamedTemporaryFile(suffix=file_extension,delete=False) as temp:
+        temp.write(file_object.getvalue())
+        temp.seek(0)
+
+        # split file into chunks
+        audio = AudioSegment.from_file(temp.name)
+        audio_chunks = split_on_silence(audio,
+            # experiment with this value for your target audio file
+            min_silence_len=3000,
+            # adjust this per requirement
+            silence_thresh=audio.dBFS-30,
+            # keep the silence for 1 second, adjustable as well
+            keep_silence=100,
+        )
+        
+        # create a directory to store the audio chunks
+        folder_name = "audio-chunks"
+        if not os.path.isdir(folder_name):
+            os.mkdir(folder_name)
+        whole_text = ""
+        
+        # process each chunk 
+        for i, audio_chunk in enumerate(audio_chunks, start=1):
+            # export audio chunk and save it in the `folder_name` directory.
+            chunk_filename = os.path.join(folder_name, f"chunk{i}.wav")
+            audio_chunk.export(chunk_filename, format="wav")
+            # recognize the chunk
+            try:
+                # audio to text
+                r = sr.Recognizer()
+                uploaded_chunk = sr.AudioFile(chunk_filename)
+                with uploaded_chunk as source:
+                    chunk_audio = r.record(source)
+                text = r.recognize_whisper(chunk_audio,"medium")
+            except sr.UnknownValueError as e:
+                print("Error:", str(e))
+            else:
+                text = f"{text.capitalize()}. "
+                print(chunk_filename, ":", text)
+                whole_text += text
+
+        # close temp file
+        temp.close()
+        os.unlink(temp.name)
+        
+    # clean up the audio-chunks folders
+    shutil.rmtree(folder_name)
+    
+    # return the text for all chunks detected
+    return whole_text
+
+def transcribe_audio_paid(file):
+    # transcribes an audio file to text via AssemblyAI
 
     # get file url
     headers = {'authorization':assemblyai_api_key}
