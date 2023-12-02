@@ -5,6 +5,7 @@
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
 import json
+import nltk
 import requests
 import streamlit as st
 import streamlit_authenticator as stauth
@@ -45,14 +46,6 @@ def api_get_vector_object(text):
         print(response.content)
     
     return message_vector
-
-def text_cleanup(text):
-    # removes punctuation incompatible with data vectorization API
-    punctuation = ["/", "?"]
-    for symbol in punctuation:
-        text = text.replace(symbol," ")
-    
-    return text
 
 def clear_session_state(variable_list):
     # deletes variables from streamlit session state
@@ -206,6 +199,14 @@ def error_message(text,seconds):
         time.sleep(seconds)
         error.empty()
 
+def generate_unique_id():
+    # generate id that will tie all text chunks together
+    import uuid
+    
+    unique_id = str(uuid.uuid4())
+    
+    return unique_id
+
 def initialize_session_state(variable_list):
     # creates empty variables in streamlit session state
     for variable in variable_list:
@@ -226,6 +227,37 @@ def load_yml():
     )
     
     return config, authenticator
+
+def split_text_with_overlap(text, chunk_size=500, overlap_size=100):
+    # download punky and initialize tokenizer
+    nltk.download("punkt")
+    tokenizer = nltk.tokenize.punkt.PunktSentenceTokenizer()
+
+    # separate text into an array of sentences
+    array = tokenizer.tokenize(text)
+
+    # if length of text chunk > 500, index document
+    # afterwards, prepend previous 100 characters for context overlap
+    chunks = []
+    chunk = ""
+    for index, sentence in enumerate(array):
+        if (len(chunk) + len(sentence)) >= chunk_size:
+            chunks.append(chunk)
+
+            overlap = ""
+            overlap_length = len(overlap)
+            overlap_index = index - 1
+            while ((overlap_length + len(array[overlap_index])) < overlap_size) and overlap_index != -1:
+                overlap = (array[overlap_index] + overlap)
+                overlap_length = len(overlap)
+                overlap_index = overlap_index - 1
+            chunk = overlap + sentence
+        else:
+            chunk += sentence
+    # index last bit of text that may not hit length limit
+    chunks.append(chunk)
+    
+    return chunks
 
 def success_message(text):
     # displays success message
@@ -325,6 +357,14 @@ def transcribe_audio_paid(file):
         result = requests.get(endpoint, headers=headers).json()
 
     return result['text']
+
+def text_cleanup(text):
+    # removes punctuation incompatible with data vectorization API
+    punctuation = ["/", "?"]
+    for symbol in punctuation:
+        text = text.replace(symbol," ")
+    
+    return text
 
 def update_yml():
     # updates login authentication configuration file
