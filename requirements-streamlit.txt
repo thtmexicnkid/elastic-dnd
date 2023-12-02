@@ -1,4 +1,5 @@
 elasticsearch
+nltk
 openai-whisper
 pydub
 requests
