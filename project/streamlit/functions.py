@@ -71,7 +71,7 @@ def elastic_ai_notes_query(vector_object):
     )
     
     # sends document to index with success or failure message
-    response = client.search(index="dnd-notes-*",knn={"field":"message_vector","query_vector":vector_object,"k":10,"num_candidates":100})
+    response = client.search(index="dnd-notes-*",knn={"field":"content_vector","query_vector":vector_object,"k":10,"num_candidates":100})
     
     return response['hits']['hits'][0]['_source']["message"]
     
