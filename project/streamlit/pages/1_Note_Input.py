@@ -40,14 +40,18 @@ else:
                     # removes forward slash that will break the API call for AI functionality
                     st.session_state["transcribed_text"] = text_cleanup(transcribe_audio_paid(st.session_state.file))
                     if st.session_state.transcribed_text not in (None,""):
-                        # gets vector object for use with AI functionality
-                        st.session_state["message_vector"] = api_get_vector_object(st.session_state.transcribed_text)
-                        if st.session_state.message_vector == None:
-                            error_message("AI API vectorization failure",2)
-                            st.session_state
-                        else:
-                            st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text,"message_vector":st.session_state.message_vector})
-                            elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload,True)
+                        st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
+                        ### FOR LATER - check if log_id exists in elastic, re-generate_unique_id if it does ###
+                        log_message_array = split_text_with_overlap(st.session_state.transcribed_text)
+                        for log_message in log_message_array:
+                            st.session_state["content"] = "This note took place in session " + str(st.session_state.log_session) + ". " + log_message
+                            # gets vector object for use with AI functionality
+                            st.session_state["content_vector"] = api_get_vector_object(st.session_state.content)
+                            if st.session_state.content_vector == None:
+                                error_message("AI API vectorization failure",2)
+                            else:
+                                st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text,"message_vector":st.session_state.message_vector,"id":st.session_state.log_id,"content":st.session_state.content,"content_vector":st.session_state.content_vector})
+                                elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload,True)
                     else:
                         error_message("Audio transcription failure",2)
                 else:
@@ -63,13 +67,18 @@ else:
                     # removes forward slash that will break the API call for AI functionality
                     st.session_state["transcribed_text"] = text_cleanup(transcribe_audio_free(st.session_state.file))
                     if st.session_state.transcribed_text not in (None,""):
-                        # gets vector object for use with AI functionality
-                        st.session_state["message_vector"] = api_get_vector_object(st.session_state.transcribed_text)
-                        if st.session_state.message_vector == None:
-                            error_message("AI API vectorization failure",2)
-                        else:
-                            st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text,"message_vector":st.session_state.message_vector})
-                            elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload,True)
+                        st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
+                        ### FOR LATER - check if log_id exists in elastic, re-generate_unique_id if it does ###
+                        log_message_array = split_text_with_overlap(st.session_state.transcribed_text)
+                        for log_message in log_message_array:
+                            st.session_state["content"] = "This note took place in session " + str(st.session_state.log_session) + ". " + log_message
+                            # gets vector object for use with AI functionality
+                            st.session_state["content_vector"] = api_get_vector_object(st.session_state.content)
+                            if st.session_state.content_vector == None:
+                                error_message("AI API vectorization failure",2)
+                            else:
+                                st.session_state["log_payload"] = json.dumps({"session":st.session_state.log_session,"type":st.session_state.log_type,"message":st.session_state.transcribed_text,"message_vector":st.session_state.message_vector,"id":st.session_state.log_id,"content":st.session_state.content,"content_vector":st.session_state.content_vector})
+                                elastic_index_document("dnd-notes-transcribed",st.session_state.log_payload,True)
                     else:
                         error_message("Audio transcription failure",2)
                 else:
@@ -95,14 +104,19 @@ else:
                     st.session_state["log_message"] = text_cleanup(st.text_area("Input note text:"))
                     st.session_state["submitted"] = st.form_submit_button("Upload note")
                     if st.session_state.submitted == True and st.session_state.log_message is not None:
-                        # gets vector object for use with AI functionality
-                        st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
-                        if st.session_state.message_vector == None:
-                            error_message("AI API vectorization failure",2)
-                        else:
-                            st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
-                            elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
-                            st.rerun()
+                        st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
+                        ### FOR LATER - check if log_id exists in elastic, re-generate_unique_id if it does ###
+                        log_message_array = split_text_with_overlap(st.session_state)
+                        for log_message in log_message_array:
+                            st.session_state["content"] = "This note took place in session " + str(st.session_state.log_session) + ". " + "The quest name is " + st.session_state.quest_name + ". " +  log_message
+                            # gets vector object for use with AI functionality
+                            st.session_state["content_vector"] = api_get_vector_object(st.session_state.content)
+                            if st.session_state.content_vector == None:
+                                error_message("AI API vectorization failure",2)
+                            else:
+                                st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"id":st.session_state.log_id,"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type,"content":st.session_state.content,"content_vector":st.session_state.content_vector,"name":st.session_state.quest_name})
+                                elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
+                        st.rerun()
                     else:
                         st.warning('Please input note text and submit')
             else:
@@ -119,14 +133,19 @@ else:
                             elastic_update_quest_status(st.session_state.quest_name)
                         else:
                             pass
-                        # gets vector object for use with AI functionality
-                        st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
-                        if st.session_state.message_vector == None:
-                            error_message("AI API vectorization failure",2)
-                        else:
-                            st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"message":st.session_state.log_message,"name":st.session_state.quest_name,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
-                            elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
-                            st.rerun()
+                        st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
+                        ### FOR LATER - check if log_id exists in elastic, re-generate_unique_id if it does ###
+                        log_message_array = split_text_with_overlap(st.session_state)
+                        for log_message in log_message_array:
+                            st.session_state["content"] = "This note took place in session " + str(st.session_state.log_session) + ". " + "The quest name is " + st.session_state.quest_name + ". " + log_message
+                            # gets vector object for use with AI functionality
+                            st.session_state["content_vector"] = api_get_vector_object(st.session_state.content)
+                            if st.session_state.content_vector == None:
+                                error_message("AI API vectorization failure",2)
+                            else:
+                                st.session_state["log_payload"] = json.dumps({"finished":st.session_state.quest_finished,"id":st.session_state.log_id,"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type,"content":st.session_state.content,"content_vector":st.session_state.content_vector,"name":st.session_state.quest_name})
+                                elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
+                        st.rerun()
                     else:
                         st.warning('Please input note text and submit')
         # displays note form for all other log types
@@ -136,14 +155,19 @@ else:
                 st.session_state["log_message"] = text_cleanup(st.text_area("Input note text:"))
                 st.session_state["submitted"] = st.form_submit_button("Upload Note")
                 if st.session_state.submitted == True and st.session_state.log_message is not None:
-                    # gets vector object for use with AI functionality
-                    st.session_state["message_vector"] = api_get_vector_object(st.session_state.log_message)
-                    if st.session_state.message_vector == None:
-                        error_message("AI API vectorization failure",2)
-                    else:
-                        st.session_state["log_payload"] = json.dumps({"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type,"message_vector":st.session_state.message_vector})
-                        elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
-                        st.rerun()
+                    st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
+                    ### FOR LATER - check if log_id exists in elastic, re-generate_unique_id if it does ###
+                    log_message_array = split_text_with_overlap(st.session_state.log_message)
+                    for log_message in log_message_array:
+                        st.session_state["content"] = "This note took place in session " + str(st.session_state.log_session) + ". " + log_message
+                        # gets vector object for use with AI functionality
+                        st.session_state["content_vector"] = api_get_vector_object(st.session_state.content)
+                        if st.session_state.content_vector == None:
+                            error_message("AI API vectorization failure",2)
+                        else:
+                            st.session_state["log_payload"] = json.dumps({"id":st.session_state.log_id,"message":st.session_state.log_message,"session":st.session_state.log_session,"type":st.session_state.log_type,"content":st.session_state.content,"content_vector":st.session_state.content_vector})
+                            elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
+                    st.rerun()
                 else:
                     st.warning('Please input note text and submit')
         
