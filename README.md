@@ -28,6 +28,9 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 * Open command prompt / terminal and navigate to folder containing "docker-compose.yml"
 * Run "docker-compose up" and wait for your deployment to create itself
 
+> ***NOTE***
+> The libraries for the free audio transcription function take a little while to install.
+
 ### Streamlit Setup
 * Log into [Kibana](http://localhost:5601):
   * Username is "elastic"
