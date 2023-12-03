@@ -27,7 +27,7 @@ else:
     # runs app_page2_* functions depending on what is selected in selectbox
     if st.session_state.note_type == "Audio":
         #list of variables to clear from session state once finished
-        audio_form_variable_list = ["log_type","log_session","file","submitted","transcribed_text","log_payload","message_vector"]
+        audio_form_variable_list = ["log_type","log_session","file","submitted","transcribed_text","log_payload","log_id","content","content_vector"]
         
         if assemblyai_api_key:
             # displays note form widgets, creates note payload, sends payload to an Elastic index, and handles error / success / warning messages
@@ -88,7 +88,7 @@ else:
         clear_session_state(audio_form_variable_list)
     elif st.session_state.note_type == "Text":
         #list of variables to clear from session state once finished
-        text_form_variable_list = ["log_type","log_session","note_taker","log_index","quest_type","quest_name","quest_finished","log_message","submitted","log_payload","message_vector"]
+        text_form_variable_list = ["log_type","log_session","note_taker","log_index","quest_type","quest_name","quest_finished","log_message","submitted","log_payload","log_id","content","content_vector"]
 
         # displays note form widgets, creates note payload, sends payload to an Elastic index, and handles error / success / warning messages
         st.session_state["log_type"] = st.selectbox("What kind of note is this?", ["location","miscellaneous","overview","person","quest"])
