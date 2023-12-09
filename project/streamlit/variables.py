@@ -10,7 +10,7 @@
 assemblyai_api_key = None
 # use this is paying for AssemblyAI for audio transcription
 #assemblyai_api_key = "API_KEY"
-elastic_api_key = "RTA3N1Zvb0JET2JxbXFlcDZROUs6bUJUdHMxWHhUVGVqMGpMSkVRTW5OQQ=="
+elastic_api_key = "API_KEY"
 
 # *** DO NOT CHANGE ***
 elastic_url = "https://es01:9200"
