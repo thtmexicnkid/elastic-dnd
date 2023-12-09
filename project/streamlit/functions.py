@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 11/03/2023
+# Last Updated: 12/09/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -55,10 +55,10 @@ def clear_session_state(variable_list):
         except:
             pass
 
-def display_image(image_path):
+def display_image(image_path,column_width_selector):
     # displays an image via path relative to streamlit app script
     image = Image.open(image_path)
-    st.image(image)
+    st.image(image,use_column_width=column_width_selector)
 
 def elastic_ai_notes_query(vector_object):
     # queries Elastic via a KNN query to return answers to questions via virtual DM
