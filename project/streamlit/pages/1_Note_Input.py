@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/09/2023
+# Last Updated: 12/10/2023
 # 
 # Streamlit - Note Input Page - Allows the user to store audio or text notes in Elasticsearch.
 
@@ -32,6 +32,8 @@ else:
     # gather information for log_payload in form
     form_variable_list = ["log_id","log_type","log_session","log_index","file","location_name","location_description","overview_summary","person_name","person_description","quest_name","quest_description","quest_finished","submitted","transcribed_text","content","content_vector"]
     st.session_state["log_type"] = st.selectbox("What kind of note is this?", ["audio","location","miscellaneous","overview","person","quest"])
+    if st.session_state.log_type == "quest":
+        st.session_state["quest_type"] = st.selectbox("Is this quest new or existing?", ["New","Existing"])
     with st.form(st.session_state.log_type, clear_on_submit=True):
         st.session_state["log_session"] = st.slider("Which session is this?", 0, 250)
         st.session_state["log_id"] = "session" + str(st.session_state.log_session) + "-" + generate_unique_id()
@@ -75,7 +77,10 @@ else:
                 else:
                     st.warning('Please enter the person name, description, and submit')
             elif st.session_state.log_type == "quest":
-                st.session_state["quest_name"] = st.text_input("Input quest name:")
+                if st.session_state.quest_type == "Existing":
+                    st.session_state["quest_name"] = st.selectbox("Select quest to update", elastic_get_quests())
+                else:
+                    st.session_state["quest_name"] = st.text_input("Input quest name:")
                 st.session_state["quest_description"] = text_cleanup(st.text_area("Input quest description / update:"))
                 st.session_state["quest_finished"] = st.checkbox("Is the quest finished?")
                 if st.session_state.quest_name is not None and st.session_state.quest_description is not None:
