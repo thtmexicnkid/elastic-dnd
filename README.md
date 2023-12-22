@@ -9,7 +9,8 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
 * Login + Password system for access control
 * Manual note input with a handful of types -- location, quest, person, overview
 * Audio to text transcription from recorded session audio
-* WORK IN PROGRESS -- Ask the Virtual DM questions about your sessions
+* Ask the Virtual DM questions about your sessions
+* WORK IN PROGRESS -- User dashboard with last session info, outstanding quest info, etc.
 
 # Dependencies
 * [Docker Desktop](https://www.docker.com/products/docker-desktop/) or [Docker Engine](https://docs.docker.com/engine/install/) with [Docker-Compose](https://docs.docker.com/compose/install/)
