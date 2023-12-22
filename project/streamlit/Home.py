@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/09/2023
+# Last Updated: 12/22/2023
 # 
 # Streamlit - Home - Displays a dashboard of relevant information to the player
 # WORK IN PROGRESS
@@ -13,12 +13,11 @@ from variables import *
 st.set_page_config(layout="centered")
 
 # initializes session state, loads login authentication configuration, and performs index/data view setup in Elastic
-initialize_session_state(["username"])
+initialize_session_state(["username","authentication_status"])
 config, authenticator = load_yml()
 elastic_kibana_setup(config)
 
-# makes user log on to view page
-if not st.session_state.username:
+if st.session_state.authentication_status in (False,None):
     # displays elastic d&d logo as title image
     display_image(streamlit_data_path + "banner.png","auto")
     # displays login and registration widgets
@@ -27,11 +26,11 @@ if not st.session_state.username:
     with tab1:
         try:
             name,authentication_status,username = authenticator.login("Login","main")
-            if authentication_status:
+            if st.session_state.authentication_status:
                 st.rerun()
-            elif authentication_status == False:
+            elif st.session_state.authentication_status == False:
                 error_message('Username/password is incorrect')
-            elif authentication_status == None:
+            elif st.session_state.authentication_status == None:
                 st.warning('Please enter your username and password')
         except:
             pass
