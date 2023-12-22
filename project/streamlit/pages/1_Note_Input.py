@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/10/2023
+# Last Updated: 12/22/2023
 # 
 # Streamlit - Note Input Page - Allows the user to store audio or text notes in Elasticsearch.
 
@@ -12,11 +12,11 @@ from variables import *
 st.set_page_config(layout="centered")
 
 # initializes session state, loads login authentication configuration
-initialize_session_state(["username"])
+initialize_session_state(["username","authentication_status"])
 config, authenticator = load_yml()
 
 # makes user log on to view page
-if not st.session_state.username:
+if st.session_state.authentication_status in (False,None):
     error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
     with st.sidebar:
