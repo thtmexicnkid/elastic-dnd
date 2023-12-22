@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/09/2023
+# Last Updated: 12/22/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -366,7 +366,7 @@ def text_cleanup(text):
     
     return text
 
-def update_yml():
+def update_yml(updated_config):
     # updates login authentication configuration file
     with open(streamlit_project_path + "auth.yml", 'w') as file:
-        yaml.dump(config, file, default_flow_style=False)
+        yaml.dump(updated_config, file, default_flow_style=False)
