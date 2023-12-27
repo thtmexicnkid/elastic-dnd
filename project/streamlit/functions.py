@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/22/2023
+# Last Updated: 12/27/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -73,12 +73,25 @@ def elastic_ai_notes_query(vector_object):
     # sends document to index with success or failure message
     response = client.search(index="dnd-notes-*",knn={"field":"content_vector","query_vector":vector_object,"k":10,"num_candidates":100})
     
-    return response['hits']['hits'][0]['_source']["message"]
+    return response["hits"]["hits"][0]["_source"]["message"]
     
     # close Elastic connection
     client.close()
 
-def elastic_get_quests():
+def elastic_get_previous_session_summary(log_index):
+    # creates Elastic connection
+    client = Elasticsearch(
+        elastic_url,
+        ca_certs=elastic_ca_certs,
+        api_key=elastic_api_key
+    )
+
+    # gets overview note from last session
+    response = client.search(index=log_index,size=1,sort=["session:desc"],source=["message"],query={"bool":{"must":[{"match":{"type":"overview"}}]}})
+    
+    return response["hits"]["hits"][0]["_source"]["message"]
+
+def elastic_get_quests(log_index):
     # queries Elastic for unfinished quests and returns array    
     quest_names = []
     
@@ -90,7 +103,7 @@ def elastic_get_quests():
     )
     
     # gets unfinished quests
-    response = client.search(index=st.session_state.log_index,size=0,query={"bool":{"must":[{"match":{"type.keyword":"quest"}}],"must_not":[{"match":{"finished":"true"}}]}},aggregations={"unfinished_quests":{"terms":{"field":"name.keyword"}}})
+    response = client.search(index=log_index,size=0,query={"bool":{"must":[{"match":{"type":"quest"}}],"must_not":[{"match":{"quest.finished":"true"}}]}},aggregations={"unfinished_quests":{"terms":{"field":"quest.name.keyword"}}})
     
     for line in response["aggregations"]["unfinished_quests"]["buckets"]:
         quest_names.append(line["key"])
