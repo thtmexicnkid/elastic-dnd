@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/22/2023
+# Last Updated: 12/27/2023
 # 
 # Streamlit - Home - Displays a dashboard of relevant information to the player
 # WORK IN PROGRESS
@@ -10,7 +10,7 @@ from functions import *
 from variables import *
 
 # set streamlit app to use whole screen
-st.set_page_config(layout="centered")
+st.set_page_config(layout="wide")
 
 # initializes session state, loads login authentication configuration, and performs index/data view setup in Elastic
 initialize_session_state(["username","authentication_status"])
@@ -43,6 +43,7 @@ if st.session_state.authentication_status in (False,None):
         except Exception as e:
             error_message(e)
 else:
+    st.session_state["log_index"] = "dnd-notes-" + st.session_state.username
     with st.sidebar:
         # adds elastic d&d logo to sidebar
         display_image(streamlit_data_path + "banner.png","auto")
@@ -59,6 +60,10 @@ else:
     # displays summary and active quest widgets
     column1, column2 = st.columns(2)
     with column1:
-        st.text("This is column 1.")
+        st.header("Last Session:")
+        st.markdown(elastic_get_previous_session_summary(st.session_state.log_index))
     with column2:
-        st.text("This is column 2.")
+        st.header("Unfinished Quests:")
+        quests = elastic_get_quests(st.session_state.log_index)
+        for quest in quests:
+            st.markdown("- " + quest)
