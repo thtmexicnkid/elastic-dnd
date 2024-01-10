@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/22/2023
+# Last Updated: 01/10/2023
 # 
 # Streamlit - Note Input Page - Allows the user to store audio or text notes in Elasticsearch.
 
