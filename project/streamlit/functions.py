@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/27/2023
+# Last Updated: 01/10/2023
 # 
 # Streamlit - Backend - Houses all functions used in pages of the application.
 
@@ -78,7 +78,7 @@ def elastic_ai_notes_query(vector_object):
     # close Elastic connection
     client.close()
 
-def elastic_get_previous_session_summary(log_index):
+def elastic_get_previous_session_summary(log_index,session_number):
     # creates Elastic connection
     client = Elasticsearch(
         elastic_url,
@@ -87,9 +87,14 @@ def elastic_get_previous_session_summary(log_index):
     )
 
     # gets overview note from last session
-    response = client.search(index=log_index,size=1,sort=["session:desc"],source=["message"],query={"bool":{"must":[{"match":{"type":"overview"}}]}})
+    response = client.search(index=log_index,size=1,source=["message"],query={"bool":{"must":[{"match":{"type":"overview"}},{"match":{"session":session_number}}]}})
     
-    return response["hits"]["hits"][0]["_source"]["message"]
+    try:
+        summary = response["hits"]["hits"][0]["_source"]["message"]
+    except:
+        summary = "No overview log was submitted from last session."
+    
+    return summary   
 
 def elastic_get_quests(log_index):
     # queries Elastic for unfinished quests and returns array    
@@ -112,6 +117,23 @@ def elastic_get_quests(log_index):
     
     # close Elastic connection
     client.close()
+
+def elastic_get_session_numbers(log_index):
+    # creates Elastic connection
+    client = Elasticsearch(
+        elastic_url,
+        ca_certs=elastic_ca_certs,
+        api_key=elastic_api_key
+    )
+
+    # gets last session number
+    response = client.search(index=log_index,size=1,sort=["@timestamp:desc"],source=["session"],query={"bool":{"must":[{"range":{"@timestamp":{"lt":"now/d"}}}]}})
+    
+    # grab last session number and calculate current session number
+    last_session = response["hits"]["hits"][0]["_source"]["session"]
+    current_session = int(last_session) + 1
+    
+    return last_session, current_session
 
 def elastic_index_document(index,document,status_message):
     # sends a document to an Elastic index
