@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/27/2023
+# Last Updated: 01/10/2023
 # 
 # Streamlit - Home - Displays a dashboard of relevant information to the player
 # WORK IN PROGRESS
@@ -55,13 +55,14 @@ else:
             print("Picture unavailable for home page sidebar.")
     # displays player welcome message
     st.markdown("<h1 style='text-align: center; color: white;'>Hello " + config["credentials"]["usernames"][st.session_state.username]["name"] + "!</h1>", unsafe_allow_html=True)
-    st.markdown("<h3 style='text-align: center; color: white;'>Prepare for your adventure!</h3>", unsafe_allow_html=True)
+    st.session_state["last_session"], st.session_state["current_session"] = elastic_get_session_numbers(st.session_state.log_index)
+    st.markdown("<h3 style='text-align: center; color: white;'>Prepare for session " + str(st.session_state.current_session) + "!</h3>", unsafe_allow_html=True)
     st.header("",divider=True)
     # displays summary and active quest widgets
     column1, column2 = st.columns(2)
     with column1:
         st.header("Last Session:")
-        st.markdown(elastic_get_previous_session_summary(st.session_state.log_index))
+        st.markdown(elastic_get_previous_session_summary(st.session_state.log_index,st.session_state.last_session))
     with column2:
         st.header("Unfinished Quests:")
         quests = elastic_get_quests(st.session_state.log_index)
