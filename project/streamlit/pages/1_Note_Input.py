@@ -78,7 +78,7 @@ else:
                     st.warning('Please enter the person name, description, and submit')
             elif st.session_state.log_type == "quest":
                 if st.session_state.quest_type == "Existing":
-                    st.session_state["quest_name"] = st.selectbox("Select quest to update", elastic_get_quests())
+                    st.session_state["quest_name"] = st.selectbox("Select quest to update", elastic_get_quests(st.session_state.log_index))
                 else:
                     st.session_state["quest_name"] = st.text_input("Input quest name:")
                 st.session_state["quest_description"] = text_cleanup(st.text_area("Input quest description / update:"))
