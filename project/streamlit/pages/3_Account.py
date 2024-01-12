@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/22/2023
+# Last Updated: 01/12/2023
 # 
 # Streamlit - Account Page - Allows the user to change their password and log out.
 
@@ -9,7 +9,7 @@ from functions import *
 from variables import *
 
 # set streamlit app to use whole screen
-st.set_page_config(layout="centered")
+st.set_page_config(layout="wide")
 
 # initializes session state, loads login authentication configuration, and performs index/data view setup in Elastic
 initialize_session_state(["username","authentication_status"])
@@ -19,6 +19,16 @@ config, authenticator = load_yml()
 if st.session_state.authentication_status in (False,None):
     error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
+    st.header("Account",divider="grey")
+
+    try:
+        if authenticator.reset_password(st.session_state.username, 'Reset password'):
+            success_message('Password modified successfully')
+            update_yml(config)
+    except Exception as e:
+        error_message(e,2)
+    authenticator.logout('Logout', 'main')
+
     with st.sidebar:
         # adds elastic d&d logo to sidebar
         display_image(streamlit_data_path + "banner.png","auto")
@@ -28,11 +38,5 @@ else:
             display_image(streamlit_data_path + st.session_state.username + ".png","auto")
         except:
             print("Picture unavailable for home page sidebar.")
-    st.header('Account',divider=True)
-    try:
-        if authenticator.reset_password(st.session_state.username, 'Reset password'):
-            success_message('Password modified successfully')
-            update_yml(config)
-    except Exception as e:
-        error_message(e,2)
-    authenticator.logout('Logout', 'main')
+        st.divider()
+        st.text("Current session: " + str(st.session_state.current_session))
