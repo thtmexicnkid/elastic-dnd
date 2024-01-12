@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 12/22/2023
+# Last Updated: 01/12/2023
 # 
 # Streamlit - Virtual DM Page - Allows the user to ask questions and receive answers automatically.
 
@@ -19,22 +19,22 @@ config, authenticator = load_yml()
 if st.session_state.authentication_status in (False,None):
     error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
-    with st.sidebar:
-        # adds elastic d&d logo to sidebar
-        display_image(streamlit_data_path + "banner.png","auto")
-        st.divider()
-        # add character picture to sidebar, if available
-        try:
-            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
-        except:
-            print("Picture unavailable for home page sidebar.")
-    st.header('Veverbot',divider=True)
+    st.header('Veverbot',divider="grey")
     st.session_state["log_index"] = "dnd-notes-" + st.session_state.username
     virtual_dm_variable_list = ["question","response","question_vector","query_results","answer","answer_vector","log_payload"]
     
     # Initialize chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
+
+    # question prompts
+    column1, column2, column3, column4, column5 = st.columns(5)
+    column1.button("Question 1 Placeholder",type="primary",on_click=None)
+    column2.button("Question 2 Placeholder",type="primary",on_click=None)
+    column3.button("Question 3 Placeholder",type="primary",on_click=None)
+    column4.button("Question 4 Placeholder",type="primary",on_click=None)
+    column5.button("Question 5 Placeholder",type="primary",on_click=None)
+    st.header("",divider="grey")
 
     # Display chat messages from history on app rerun
     for message in st.session_state.messages:
@@ -70,5 +70,17 @@ else:
                     else:
                         st.session_state["log_payload"] = json.dumps({"question":st.session_state.question,"question_vector":st.session_state.question_vector,"answer":answer,"answer_vector":st.session_state.answer_vector})
                         elastic_index_document("virtual_dm-questions_answers",st.session_state.log_payload,False)
+
+    with st.sidebar:
+        # adds elastic d&d logo to sidebar
+        display_image(streamlit_data_path + "banner.png","auto")
+        st.divider()
+        # add character picture to sidebar, if available
+        try:
+            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
+        except:
+            print("Picture unavailable for home page sidebar.")
+        st.divider()
+        st.text("Current session: " + str(st.session_state.current_session))
 
     clear_session_state(virtual_dm_variable_list)
