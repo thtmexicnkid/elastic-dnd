@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 01/10/2023
+# Last Updated: 01/12/2023
 # 
 # Streamlit - Note Input Page - Allows the user to store audio or text notes in Elasticsearch.
 
@@ -9,7 +9,7 @@ from functions import *
 from variables import *
 
 # set streamlit app to use centered format
-st.set_page_config(layout="centered")
+st.set_page_config(layout="wide")
 
 # initializes session state, loads login authentication configuration
 initialize_session_state(["username","authentication_status"])
@@ -19,16 +19,7 @@ config, authenticator = load_yml()
 if st.session_state.authentication_status in (False,None):
     error_message("UNAUTHORIZED: Please login on the Home page.",False)
 else:
-    with st.sidebar:
-        # adds elastic d&d logo to sidebar
-        display_image(streamlit_data_path + "banner.png","auto")
-        st.divider()
-        # add character picture to sidebar, if available
-        try:
-            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
-        except:
-            print("Picture unavailable for home page sidebar.")
-    st.header('Note Input',divider=True)
+    st.header("Note Input",divider="grey")
     # gather information for log_payload in form
     form_variable_list = ["log_id","log_type","log_session","log_index","file","location_name","location_description","overview_summary","person_name","person_description","quest_name","quest_description","quest_finished","submitted","transcribed_text","content","content_vector"]
     st.session_state["log_type"] = st.selectbox("What kind of note is this?", ["audio","location","miscellaneous","overview","person","quest"])
@@ -166,4 +157,16 @@ else:
                     else:
                         st.session_state["log_payload"] = json.dumps({"id":st.session_state.log_id,"type":st.session_state.log_type,"session":st.session_state.log_session,"message":st.session_state.quest_name + ". " + st.session_state.quest_description + status,"content":st.session_state.content,"content_vector":st.session_state.content_vector,"quest":{"name":st.session_state.quest_name,"description":st.session_state.quest_description,"finished":st.session_state.quest_finished}})
                         elastic_index_document(st.session_state.log_index,st.session_state.log_payload,True)
+    with st.sidebar:
+        # adds elastic d&d logo to sidebar
+        display_image(streamlit_data_path + "banner.png","auto")
+        st.divider()
+        # add character picture to sidebar, if available
+        try:
+            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
+        except:
+            print("Picture unavailable for home page sidebar.")
+        st.divider()
+        st.text("Current session: " + str(st.session_state.current_session))
+        
     clear_session_state(form_variable_list)
