@@ -1,6 +1,6 @@
 # Elastic D&D
 # Author: thtmexicnkid
-# Last Updated: 01/10/2023
+# Last Updated: 01/12/2023
 # 
 # Streamlit - Home - Displays a dashboard of relevant information to the player
 # WORK IN PROGRESS
@@ -44,20 +44,11 @@ if st.session_state.authentication_status in (False,None):
             error_message(e)
 else:
     st.session_state["log_index"] = "dnd-notes-" + st.session_state.username
-    with st.sidebar:
-        # adds elastic d&d logo to sidebar
-        display_image(streamlit_data_path + "banner.png","auto")
-        st.divider()
-        # adds character picture to sidebar, if available
-        try:
-            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
-        except:
-            print("Picture unavailable for home page sidebar.")
     # displays player welcome message
     st.markdown("<h1 style='text-align: center; color: white;'>Hello " + config["credentials"]["usernames"][st.session_state.username]["name"] + "!</h1>", unsafe_allow_html=True)
     st.session_state["last_session"], st.session_state["current_session"] = elastic_get_session_numbers(st.session_state.log_index)
     st.markdown("<h3 style='text-align: center; color: white;'>Prepare for session " + str(st.session_state.current_session) + "!</h3>", unsafe_allow_html=True)
-    st.header("",divider=True)
+    st.header("",divider="grey")
     # displays summary and active quest widgets
     column1, column2 = st.columns(2)
     with column1:
@@ -68,3 +59,14 @@ else:
         quests = elastic_get_quests(st.session_state.log_index)
         for quest in quests:
             st.markdown("- " + quest)
+    with st.sidebar:
+        # adds elastic d&d logo to sidebar
+        display_image(streamlit_data_path + "banner.png","auto")
+        st.divider()
+        # adds character picture to sidebar, if available
+        try:
+            display_image(streamlit_data_path + st.session_state.username + ".png","auto")
+        except:
+            print("Picture unavailable for home page sidebar.")
+        st.divider()
+        st.text("Current session: " + str(st.session_state.current_session))
