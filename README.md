@@ -26,7 +26,8 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
   * Change ELASTIC_PASSWORD and KIBANA_PASSWORD to something you'll remember
   * Set ES_MEM_LIMIT and KB_MEM_LIMIT to a value (in bytes) reflecting what is available in your environment
     * NOTE -- I have 32GB available and set mine to 8GB a piece. Truthfully, for a deployment this size, that is overkill. You would probably be okay with a 2-4GB a piece.
-* Open command prompt / terminal and navigate to folder containing "docker-compose.yml"
+* Open command prompt / terminal and navigate to folder containing the "docker-compose-*.yml" files.
+* Rename either "docker-compose-linux.yml" or "docker-compose-windows.yml" to "docker-compose.yml", depending on which operating system you are running the program on.
 * Run "docker-compose up" and wait for your deployment to create itself
 
 > ***NOTE*** -- The libraries for the free audio transcription function take a little while to install.
