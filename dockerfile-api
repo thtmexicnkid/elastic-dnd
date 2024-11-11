@@ -37,5 +37,5 @@ ENV PYTHONDONTWRITEBYTECODE 1
 # Path
 ENV PATH="/opt/venv/bin:$PATH"
 
-# Run streamlit
+# Run FastAPI
 CMD python3 api/main.py
