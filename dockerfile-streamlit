@@ -38,4 +38,4 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PATH="/opt/venv/bin:$PATH"
 
 # Run streamlit
-CMD streamlit run streamlit/main.py
+CMD streamlit run streamlit/Home.py
