@@ -27,8 +27,10 @@ My attempt at using Elastic while playing Dungeons &amp; Dragons; mainly for not
   * Set ES_MEM_LIMIT and KB_MEM_LIMIT to a value (in bytes) reflecting what is available in your environment
     * NOTE -- I have 32GB available and set mine to 8GB a piece. Truthfully, for a deployment this size, that is overkill. You would probably be okay with a 2-4GB a piece.
 * Open command prompt / terminal and navigate to folder containing the "docker-compose-*.yml" files.
-* Rename either "docker-compose-linux.yml" or "docker-compose-windows.yml" to "docker-compose.yml", depending on which operating system you are running the program on.
-* Run "docker-compose up" and wait for your deployment to create itself
+* If running on Linux:
+  * Run "docker-compose -f docker-compose-linux up" and wait for your deployment to create itself.
+* If running on Windows:
+  * Run "docker-compose -f docker-compose-windows up" and wait for your deployment to create itself.
 
 > ***NOTE*** -- The libraries for the free audio transcription function take a little while to install.
 
@@ -43,8 +45,8 @@ PUT _security/api_key
   "name": "streamlit-auth"
 }
 ```
-* Paste the API key value into the "elastic_api_key variable" in "projects/app.py"
-* Paste your AssemblyAI API key into the "transcribe_audio" function in "projects/app.py"
+* Paste the API key value into the "elastic_api_key variable" in "projects/streamlit/variables.py"
+* Paste your AssemblyAI API key into the "transcribe_audio" function in "projects/streamlit/variables.py"
 
 ### Player Setup
 * Either (you can read more about this on my [blog](https://dev.to/thtmexicnkid/elastic-dd-week-2-streamlit-the-login-page-4olh)):
